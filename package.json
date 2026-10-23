@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/mixr_lib",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "Shared utilities library for MIXR cocktail application with type-safe patterns and comprehensive integration",
   "type": "module",
   "main": "dist/index.js",
@@ -37,7 +37,7 @@
   "license": "BUSL-1.1",
   "peerDependencies": {
     "@sudobility/di": "^1.5.75",
-    "@sudobility/mixr_types": "^0.0.26",
+    "@sudobility/mixr_types": "^0.0.27",
     "@sudobility/types": "^1.9.74",
     "@tanstack/react-query": ">=5.0.0",
     "react": ">=18.0.0",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@sudobility/di": "^1.5.75",
-    "@sudobility/mixr_client": "^0.1.44",
+    "@sudobility/mixr_client": "^0.1.45",
     "@sudobility/types": "^1.9.74",
     "@tanstack/react-query": "^5.90.5",
     "@testing-library/react": "^16.3.0",

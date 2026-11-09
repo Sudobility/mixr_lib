@@ -5,9 +5,9 @@
 > explicitly asks in that turn**. Approval for an earlier change does not carry forward, and
 > finishing a task is not permission to commit it.
 
-Business logic library for MIXR with shared utilities, types, and hooks.
+Business logic library for MIXR with shared utilities, types, and hooks. ESM-only (`"type": "module"`), consumed by the MIXR frontend.
 
-**npm**: `@sudobility/mixr_lib` (restricted)
+**Package**: `@sudobility/mixr_lib` — private, scoped, published to **GitHub Packages** (`npm.pkg.github.com`, see `.npmrc`), not public npm. License BUSL-1.1.
 
 ## Tech Stack
 
@@ -30,6 +30,8 @@ src/
 │   └── index.ts          # Re-exports from mixr_types
 ├── utils/
 │   └── index.ts          # Utility functions
+├── test/
+│   └── setup.ts          # Vitest setup (cleanup, localStorage mock)
 └── __tests__/
     ├── business/
     ├── hooks/
@@ -37,17 +39,20 @@ src/
     └── utils/
 ```
 
+Each `src/<area>/index.ts` is a single barrel module; `src/index.ts` re-exports the public surface. `_resetMixrLib()` in `business/index.ts` is `@internal`, for tests only.
+
 ## Commands
 
 ```bash
-bun run build        # Build to dist/
-bun run build:watch  # Watch mode build
+bun run build        # tsc -p tsconfig.build.json + scripts/fix-esm-imports.mjs
+bun run build:watch  # tsc --watch
 bun run clean        # Remove dist/
-bun run test         # Run Vitest
-bun run lint         # Run ESLint
-bun run typecheck    # TypeScript check
+bun run test:unit    # Run Vitest once   (NOTE: no `test` script exists)
+bun run test:watch   # Run Vitest in watch mode
+bun run lint         # Run ESLint (src, .ts/.tsx)
+bun run typecheck    # tsc --noEmit
 bun run format       # Format with Prettier
-bun run verify       # Run typecheck + lint + test + build
+bun run verify       # typecheck + lint + test:unit + build
 ```
 
 ## Exports
@@ -101,8 +106,11 @@ import type { Equipment, Recipe, Mood } from '@sudobility/mixr_lib';
 
 ## Peer Dependencies
 
-- `@sudobility/di` >= 1.5.36
-- `@sudobility/mixr_types` >= 0.0.8
+(from `package.json` — keep this list in sync with it)
+
+- `@sudobility/di` ^1.5.85
+- `@sudobility/mixr_types` ^0.0.31
+- `@sudobility/types` ^1.9.78
 - `@tanstack/react-query` >= 5.0.0
 - `react` >= 18.0.0
 - `zustand` >= 5.0.0
@@ -120,10 +128,14 @@ mixr (frontend)
 
 ## Publishing
 
-```bash
-bun run prepublishOnly  # Clean + build
-npm publish             # Publish to npm
-```
+Publishing is automated by CI (`.github/workflows/ci-cd.yml`, which calls the reusable `johnqh/workflows` unified-cicd with `publish-target: github`) on pushes to `main`/`develop`. Manual: `bun run prepublishOnly` (clean + build) then publish to GitHub Packages. `zustand`, `@tanstack/react-query`, and `@sudobility/di` are declared peer deps but not yet imported anywhere in `src/` (only `@sudobility/mixr_client`, `@sudobility/mixr_types`, `@sudobility/types`, and `react` are actually used).
+
+## Gotchas
+
+- **`MIXR_LIB_VERSION`** in `src/business/index.ts` is a hardcoded string (`'0.0.14'`) and is **stale** vs `package.json` (`0.0.52`); its "kept in sync" comment is aspirational. Nothing auto-updates it.
+- **ESM post-build rewrite is mandatory**: `tsc` uses `moduleResolution: "bundler"` and emits extensionless relative imports that Node's ESM loader rejects. `scripts/fix-esm-imports.mjs` rewrites them to explicit `.js` paths after every build — never ship `dist/` without it.
+- **`tsconfig.build.json` relaxes strictness** (`noUnusedLocals`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, etc. off) vs the strict `tsconfig.json` used by `typecheck`. Code can build but fail `typecheck`.
+- **Tests need a GitHub Packages auth token** to install the `@sudobility/*` peer deps (`.npmrc`).
 
 ## Git Workflow
 

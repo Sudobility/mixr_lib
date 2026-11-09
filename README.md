@@ -1,8 +1,19 @@
 # @sudobility/mixr_lib
 
-Business logic library for the MIXR cocktail platform with shared utilities, validation, and recipe helpers.
+Business logic library for the MIXR cocktail platform with shared utilities, validation, and recipe helpers. It sits between `@sudobility/mixr_client` (API hooks) and the MIXR frontend app, re-exporting the domain types and adding formatting, validation, and recipe helpers.
+
+Published as an ESM-only package (`"type": "module"`) targeting React 18+ projects.
 
 ## Installation
+
+This is a private, scoped package published to **GitHub Packages** (see `.npmrc`), not the public npm registry. Consuming projects need an `.npmrc` pointing the `@sudobility` scope at GitHub Packages with an authenticated read token:
+
+```
+@sudobility:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GH_PACKAGES_READ_TOKEN}
+```
+
+Then:
 
 ```bash
 bun add @sudobility/mixr_lib
@@ -11,7 +22,7 @@ bun add @sudobility/mixr_lib
 ### Peer Dependencies
 
 ```bash
-bun add @sudobility/di @sudobility/mixr_types @tanstack/react-query react zustand
+bun add @sudobility/di @sudobility/mixr_types @sudobility/types @tanstack/react-query react zustand
 ```
 
 ## Usage
@@ -59,20 +70,28 @@ initializeMixrLib(client);
 - `MAX_REVIEW_LENGTH` -- 2000
 - `MIN_DISPLAY_NAME_LENGTH` / `MAX_DISPLAY_NAME_LENGTH` -- 3-50
 - `DEFAULT_PAGE_LIMIT` / `MAX_PAGE_LIMIT` -- 20/100
+- `DEFAULT_RATING_SORT` -- default rating sort order (`"newest"`)
+
+### Hooks
+
+- `useMixrLibPlaceholder(initialValue)` -- placeholder example hook (to be replaced with domain hooks)
 
 ### Types
 
-Re-exports all entity, request, and response types from `@sudobility/mixr_types`.
+Re-exports all entity, request, response, query-param, and subcategory types/constants from `@sudobility/mixr_types`, plus `Optional` and `NetworkResponse` from `@sudobility/types`.
 
 ## Development
 
 ```bash
-bun run build        # Build to dist/
+bun install          # Install dependencies (Bun only)
+bun run build        # Build to dist/ (tsc + fix-esm-imports.mjs)
 bun run build:watch  # Watch mode
-bun run test         # Run Vitest
-bun run typecheck    # TypeScript check
+bun run test:unit    # Run Vitest once
+bun run test:watch   # Run Vitest in watch mode
+bun run typecheck    # TypeScript check (tsc --noEmit)
 bun run lint         # ESLint check
-bun run verify       # Typecheck + lint + test + build
+bun run format       # Format with Prettier
+bun run verify       # typecheck + lint + test:unit + build
 ```
 
 ## Related Packages
@@ -83,4 +102,4 @@ bun run verify       # Typecheck + lint + test + build
 
 ## License
 
-MIT
+BUSL-1.1

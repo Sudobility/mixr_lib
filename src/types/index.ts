@@ -24,7 +24,7 @@ export type { Optional } from '@sudobility/types';
 // COMMON TYPES (from @sudobility/mixr_types)
 // ============================================================================
 
-/** Standard API response wrapper with optional data, error, and count fields. */
+/** Standard API response envelope (`{ success, data?, error?, timestamp }`). */
 export type { ApiResponse } from '@sudobility/mixr_types';
 
 /** Base shape shared by all API responses. */
@@ -64,7 +64,7 @@ export type { IngredientSubcategory } from '@sudobility/mixr_types';
 
 /**
  * Generic MIXR API response envelope.
- * Contains `success`, optional `data`, optional `error`, and optional `count`.
+ * Alias for the canonical `BaseResponse` (`{ success, data?, error?, timestamp }`).
  */
 export type { MixrApiResponse } from '@sudobility/mixr_types';
 
@@ -198,11 +198,8 @@ export type { RatingAggregateResponse } from '@sudobility/mixr_types';
 /** Response from deleting a recipe rating. */
 export type { DeleteRatingResponse } from '@sudobility/mixr_types';
 
-/** Response from the health check endpoint. */
+/** Health check payload (`{ status, version }`) from `@sudobility/types`. */
 export type { HealthResponse } from '@sudobility/mixr_types';
-
-/** Response from the version endpoint. */
-export type { VersionResponse } from '@sudobility/mixr_types';
 
 // ============================================================================
 // CONSTANTS

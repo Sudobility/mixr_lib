@@ -86,7 +86,6 @@ export type {
   RatingAggregateResponse,
   DeleteRatingResponse,
   HealthResponse,
-  VersionResponse,
 } from './types';
 
 export { EQUIPMENT_SUBCATEGORIES, INGREDIENT_SUBCATEGORIES } from './types';
